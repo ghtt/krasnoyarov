@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="16dp"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ImageView
+            android:id="@+id/gif_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/description_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/controls_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/prev_button"
+            android:layout_width="0dp"
+            android:src="@drawable/ic_prev_24"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/reload_button"
+            android:layout_width="0dp"
+            android:src="@drawable/ic_refresh_24"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/next_button"
+            android:layout_width="0dp"
+            android:src="@drawable/ic_next_24"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+</LinearLayout>
