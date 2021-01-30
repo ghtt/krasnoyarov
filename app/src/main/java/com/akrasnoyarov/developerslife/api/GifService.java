@@ -48,21 +48,26 @@ public class GifService {
     }
 
     public void loadImage() {
+        Log.i(TAG, "loadImage");
         Call<GifImage> call = mService.loadImage("random");
         Log.d(TAG, call.request().toString());
         call.enqueue(new Callback<GifImage>() {
             @Override
             public void onResponse(Call<GifImage> call, Response<GifImage> response) {
                 if (response.isSuccessful()) {
+                    Log.i(TAG, "onResponse is successful");
                     GifImage gifImage = response.body();
                     mResponseListener.onResponse(gifImage);
+                } else {
+                    Log.i(TAG, "onResponse is not successful");
+                    mResponseListener.onFailure();
                 }
             }
 
             @Override
             public void onFailure(Call<GifImage> call, Throwable t) {
-                Log.i(TAG, "FAILURE: " + call.toString());
-                Log.i(TAG, "FAILURE: " + t.getMessage());
+                Log.i(TAG, "onFailure");
+                mResponseListener.onFailure();
             }
         });
     }

@@ -17,18 +17,46 @@ public class GifPresenter implements GifService.ServiceResponseListener {
     private List<GifImage> mAllImages = new ArrayList<>();
     private int mCurrentImageIndex = 0;
 
+
     public GifPresenter(GifFragmentView view) {
         mGifFragmentView = view;
         mService = GifService.getInstance();
         mService.setResponseListener(this);
     }
 
+    @Override
+    public void onResponse(GifImage image) {
+        mAllImages.add(image);
+        mGifFragmentView.setImage(image);
+        if (mAllImages.size() > 1) {
+            mCurrentImageIndex++;
+        }
+        checkPrevButtonVisibility();
+    }
+
+    @Override
+    public void onFailure() {
+        onLoadFailed();
+    }
+
+    private void checkPrevButtonVisibility() {
+        if (mCurrentImageIndex == 0) {
+            mGifFragmentView.setPrevButtonVisibility(View.GONE);
+        } else if (mAllImages.size() > 1) {
+            mGifFragmentView.setPrevButtonVisibility(View.VISIBLE);
+        }
+    }
+
+    private void loadImageFromCache() {
+        mGifFragmentView.setImage(mAllImages.get(mCurrentImageIndex));
+    }
+
     public void onNextButtonClicked() {
-        Log.i("myLogs", "mAllImages.size = " + mAllImages.size() + ", current = " + mCurrentImageIndex);
         // if no images were loaded OR requested image was loaded before => reload from cache
+        mGifFragmentView.showProgressBar(View.VISIBLE);
         if (mAllImages.size() != 0 && mCurrentImageIndex != mAllImages.size() - 1) {
             mCurrentImageIndex++;
-            mGifFragmentView.setImage(mAllImages.get(mCurrentImageIndex));
+            loadImageFromCache();
         } else {
             mService.loadImage();
         }
@@ -44,30 +72,17 @@ public class GifPresenter implements GifService.ServiceResponseListener {
     }
 
     public void onReloadButtonClicked() {
+        mService.loadImage();
     }
 
+    public void onLoadFailed() {
+        mGifFragmentView.showProgressBar(View.GONE);
+        mGifFragmentView.enableReloadButton(true);
+        mGifFragmentView.showErrorImage();
+    }
 
-    @Override
-    public void onResponse(GifImage image) {
-        mAllImages.add(image);
-        mGifFragmentView.setImage(image);
-        if (mAllImages.size() > 1) {
-            mCurrentImageIndex++;
-        }
+    public void onConfigurationChange() {
         checkPrevButtonVisibility();
-    }
-
-    @Override
-    public void onFailure() {
-        Log.i("myLogs", "FAILURE");
-    }
-
-    private void checkPrevButtonVisibility() {
-        if (mCurrentImageIndex == 0) {
-            mGifFragmentView.setPrevButtonVisibility(View.GONE);
-        } else if (mAllImages.size() > 1) {
-            mGifFragmentView.setPrevButtonVisibility(View.VISIBLE);
-        }
-
+        loadImageFromCache();
     }
 }
