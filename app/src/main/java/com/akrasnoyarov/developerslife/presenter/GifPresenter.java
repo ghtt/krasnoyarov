@@ -11,17 +11,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GifPresenter implements GifService.ServiceResponseListener {
+    private final String mSection;
     private GifService mService;
     private GifFragmentView mGifFragmentView;
-    private boolean isPrevButtonVisible = false;
     private List<GifImage> mAllImages = new ArrayList<>();
     private int mCurrentImageIndex = 0;
+    private int mPageNumber = 0;
 
 
-    public GifPresenter(GifFragmentView view) {
+    public GifPresenter(GifFragmentView view, String section) {
         mGifFragmentView = view;
+        mSection = section;
         mService = GifService.getInstance();
-        mService.setResponseListener(this);
     }
 
     @Override
@@ -35,8 +36,19 @@ public class GifPresenter implements GifService.ServiceResponseListener {
     }
 
     @Override
+    public void onResponse(List<GifImage> images) {
+        //TODO пофиксить баг с hot страницей, когда на на ней нет гифок еще
+        mAllImages.addAll(images);
+        mGifFragmentView.setImage(mAllImages.get(mCurrentImageIndex));
+    }
+
+    @Override
     public void onFailure() {
         onLoadFailed();
+    }
+
+    public void init() {
+        mService.setResponseListener(this);
     }
 
     private void checkPrevButtonVisibility() {
@@ -48,7 +60,9 @@ public class GifPresenter implements GifService.ServiceResponseListener {
     }
 
     private void loadImageFromCache() {
-        mGifFragmentView.setImage(mAllImages.get(mCurrentImageIndex));
+        if (mAllImages.size() != 0) {
+            mGifFragmentView.setImage(mAllImages.get(mCurrentImageIndex));
+        }
     }
 
     public void onNextButtonClicked() {
@@ -58,7 +72,7 @@ public class GifPresenter implements GifService.ServiceResponseListener {
             mCurrentImageIndex++;
             loadImageFromCache();
         } else {
-            mService.loadImage();
+            loadImage();
         }
         checkPrevButtonVisibility();
     }
@@ -72,7 +86,7 @@ public class GifPresenter implements GifService.ServiceResponseListener {
     }
 
     public void onReloadButtonClicked() {
-        mService.loadImage();
+        loadImage();
     }
 
     public void onLoadFailed() {
@@ -84,5 +98,17 @@ public class GifPresenter implements GifService.ServiceResponseListener {
     public void onConfigurationChange() {
         checkPrevButtonVisibility();
         loadImageFromCache();
+    }
+
+    public void loadImage() {
+        if (mSection == "random") {
+            mService.loadRandomImage();
+        } else {
+            if (mCurrentImageIndex == mAllImages.size() - 1) {
+                mPageNumber++;
+                //TODO здесь нужно увеличить индекс, при прогрузке новой страницы, иначе видим старую картинку
+            }
+            mService.loadImages(mSection, mPageNumber);
+        }
     }
 }

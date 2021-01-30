@@ -29,6 +29,8 @@ import com.bumptech.glide.request.target.Target;
 
 public class GifFragment extends Fragment implements GifFragmentView {
     private static final String TAG = GifFragment.class.getSimpleName();
+    public static final String EXTRA_SECTION = "section";
+    private String mSection;
     private ImageView mGifImageView;
     private ImageButton mNextImageButton, mPrevImageButton, mReloadImageButton;
     private TextView mDescriptionTextView;
@@ -38,8 +40,13 @@ public class GifFragment extends Fragment implements GifFragmentView {
     /*
     Create a fragment by this static method. Could be used for adding arguments
      */
-    public static GifFragment newInstance() {
-        return new GifFragment();
+    public static GifFragment newInstance(String section) {
+        Bundle bundle = new Bundle();
+        bundle.putString(GifFragment.EXTRA_SECTION, section);
+
+        GifFragment gifFragment = new GifFragment();
+        gifFragment.setArguments(bundle);
+        return gifFragment;
     }
 
 
@@ -49,7 +56,6 @@ public class GifFragment extends Fragment implements GifFragmentView {
 
         // Restore fragment state after a configuration change
         if (savedInstanceState != null) {
-            Log.i(TAG, "onSaveInstanceState");
             mPresenter.onConfigurationChange();
         }
     }
@@ -57,8 +63,9 @@ public class GifFragment extends Fragment implements GifFragmentView {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-        mPresenter = new GifPresenter(this);
+
+        mSection = getArguments().getString(EXTRA_SECTION);
+        mPresenter = new GifPresenter(this, mSection);
     }
 
     @Nullable
@@ -68,6 +75,12 @@ public class GifFragment extends Fragment implements GifFragmentView {
         initViews(view);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.init();
     }
 
     private void initViews(View view) {
@@ -108,7 +121,7 @@ public class GifFragment extends Fragment implements GifFragmentView {
         String description = image.getDescription();
         clearImageDescription();
 
-        Log.i(TAG, "setImage in fragment");
+//        Log.i(TAG, "setImage in fragment " + description + " " + url);
 
         Glide.with(getActivity())
                 .load(url)
@@ -118,7 +131,7 @@ public class GifFragment extends Fragment implements GifFragmentView {
 
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        Log.i(TAG, "onLoadFailed");
+//                        Log.i(TAG, "onLoadFailed");
                         showProgressBar(View.GONE);
                         mPresenter.onLoadFailed();
                         return false;
@@ -127,7 +140,7 @@ public class GifFragment extends Fragment implements GifFragmentView {
 
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        Log.i(TAG, "onResourceReady");
+//                        Log.i(TAG, "onResourceReady");
                         enableReloadButton(false);
                         showProgressBar(View.GONE);
                         mGifImageView.setContentDescription(description);
@@ -157,7 +170,7 @@ public class GifFragment extends Fragment implements GifFragmentView {
 
     @Override
     public void showErrorImage() {
-        Log.i(TAG, "showErrorImage");
+//        Log.i(TAG, "showErrorImage");
         mGifImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_sync_problem_24));
 
     }
