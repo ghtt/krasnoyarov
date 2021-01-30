@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,6 +29,7 @@ public class GifFragment extends Fragment implements GifFragmentView {
     private static final String TAG = GifFragment.class.getSimpleName();
     private ImageView mGifImageView;
     private ImageButton mNextImageButton, mPrevImageButton, mReloadImageButton;
+    private TextView mDescriptionTextView;
     private GifPresenter mPresenter;
 
     /*
@@ -58,6 +60,7 @@ public class GifFragment extends Fragment implements GifFragmentView {
         mNextImageButton = view.findViewById(R.id.next_button);
         mPrevImageButton = view.findViewById(R.id.prev_button);
         mReloadImageButton = view.findViewById(R.id.reload_button);
+        mDescriptionTextView = view.findViewById(R.id.description_text_view);
         mPrevImageButton.setVisibility(View.GONE);
 
         mNextImageButton.setOnClickListener(new View.OnClickListener() {
@@ -84,20 +87,20 @@ public class GifFragment extends Fragment implements GifFragmentView {
 
     @Override
     public void setImage(GifImage image) {
-        Glide.with(getActivity())
-                .load(image.getGifURL())
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        return false;
-                    }
+        String url = image.getGifURL();
+        String description = image.getDescription();
 
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        return false;
-                    }
-                })
+        Glide.with(getActivity())
+                .load(url)
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .into(mGifImageView);
+
+        mGifImageView.setContentDescription(description);
+        mDescriptionTextView.setText(description);
+    }
+
+    @Override
+    public void setPrevButtonVisibility(int isVisible) {
+        mPrevImageButton.setVisibility(isVisible);
     }
 }

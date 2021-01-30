@@ -6,4 +6,5 @@ import com.akrasnoyarov.developerslife.api.GifImage;
 
 public interface GifFragmentView {
     void setImage(GifImage image);
+    void setPrevButtonVisibility(int visibility);
 }
