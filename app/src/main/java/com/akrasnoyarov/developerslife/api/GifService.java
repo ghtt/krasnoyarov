@@ -87,7 +87,6 @@ public class GifService {
                     Result result = response.body();
                     if (result.getTotalCount() != 0) {
                         List<GifImage> gifImages = result.getResult();
-                        //TODO пофиксить баг с hot страницей, когда на на ней нет гифок еще
                         mResponseListener.onResponse(gifImages);
                     } else {
                         mResponseListener.onEmptyResponse();

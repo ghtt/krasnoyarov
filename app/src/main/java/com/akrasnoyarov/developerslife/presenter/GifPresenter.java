@@ -54,6 +54,11 @@ public class GifPresenter implements GifService.ServiceResponseListener {
     }
 
     public void init() {
+        if (mAllImages.size() != 0 && mCurrentImageIndex <= mAllImages.size() - 1) {
+            loadImageFromCache();
+        } else {
+            loadImage();
+        }
         mService.setResponseListener(this);
     }
 
