@@ -63,7 +63,7 @@ public class GifFragment extends Fragment implements GifFragmentView {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setRetainInstance(true);
         mSection = getArguments().getString(EXTRA_SECTION);
         mPresenter = new GifPresenter(this, mSection);
     }
@@ -114,6 +114,7 @@ public class GifFragment extends Fragment implements GifFragmentView {
             }
         });
     }
+
 
     @Override
     public void setImage(GifImage image) {
@@ -173,6 +174,11 @@ public class GifFragment extends Fragment implements GifFragmentView {
 //        Log.i(TAG, "showErrorImage");
         mGifImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_sync_problem_24));
 
+    }
+
+    @Override
+    public void showNoDataImage() {
+        mGifImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_watch_later_24));
     }
 
     public void clearImageDescription() {

@@ -13,7 +13,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DevelopersLife"
         android:usesCleartextTraffic="true">
-        <activity android:name=".MainActivity">
+        <!--        TODO rotation is locked, because of the problem with ViewPager (didn't find the way how to save states correctly-->
+        <!--            receive error: java.lang.IllegalStateException: Fragment no longer exists for key f0: ... &ndash;&gt;-->
+        <!--            Tried to save fragments in GifViewPagerAdapter and reuse it during configuration change, but got the same issue-->
+        <!--            it will be cool, if you can share the right way how to do it, thx in advance (email: krasnoyarov1990@gmail.com)-->
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -1,5 +1,6 @@
 package com.akrasnoyarov.developerslife.presenter;
 
+import android.net.ConnectivityManager;
 import android.util.Log;
 import android.view.View;
 
@@ -26,6 +27,12 @@ public class GifPresenter implements GifService.ServiceResponseListener {
     }
 
     @Override
+    public void onEmptyResponse() {
+        mGifFragmentView.showProgressBar(View.GONE);
+        mGifFragmentView.showNoDataImage();
+    }
+
+    @Override
     public void onResponse(GifImage image) {
         mAllImages.add(image);
         mGifFragmentView.setImage(image);
@@ -37,7 +44,6 @@ public class GifPresenter implements GifService.ServiceResponseListener {
 
     @Override
     public void onResponse(List<GifImage> images) {
-        //TODO пофиксить баг с hot страницей, когда на на ней нет гифок еще
         mAllImages.addAll(images);
         mGifFragmentView.setImage(mAllImages.get(mCurrentImageIndex));
     }
@@ -86,6 +92,7 @@ public class GifPresenter implements GifService.ServiceResponseListener {
     }
 
     public void onReloadButtonClicked() {
+        mGifFragmentView.showProgressBar(View.VISIBLE);
         loadImage();
     }
 
@@ -106,7 +113,7 @@ public class GifPresenter implements GifService.ServiceResponseListener {
         } else {
             if (mCurrentImageIndex == mAllImages.size() - 1) {
                 mPageNumber++;
-                //TODO здесь нужно увеличить индекс, при прогрузке новой страницы, иначе видим старую картинку
+                mCurrentImageIndex++;
             }
             mService.loadImages(mSection, mPageNumber);
         }

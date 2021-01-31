@@ -31,8 +31,12 @@ public class GifService {
     }
 
     public interface ServiceResponseListener {
+        void onEmptyResponse();
+
         void onResponse(GifImage image);
+
         void onResponse(List<GifImage> images);
+
         void onFailure();
     }
 
@@ -81,9 +85,13 @@ public class GifService {
                 if (response.isSuccessful()) {
 //                    Log.i(TAG, "onResponse is successful");
                     Result result = response.body();
-                    List<GifImage> gifImages = result.getResult();
-
-                    mResponseListener.onResponse(gifImages);
+                    if (result.getTotalCount() != 0) {
+                        List<GifImage> gifImages = result.getResult();
+                        //TODO пофиксить баг с hot страницей, когда на на ней нет гифок еще
+                        mResponseListener.onResponse(gifImages);
+                    } else {
+                        mResponseListener.onEmptyResponse();
+                    }
                 } else {
 //                    Log.i(TAG, "loadImages onResponse is not successful");
                     mResponseListener.onFailure();
