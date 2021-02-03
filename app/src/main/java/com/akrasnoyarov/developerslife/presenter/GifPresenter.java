@@ -113,7 +113,7 @@ public class GifPresenter implements GifService.ServiceResponseListener {
     }
 
     public void loadImage() {
-        if (mSection == "random") {
+        if (mSection.equals("random")) {
             mService.loadRandomImage();
         } else {
             if (mCurrentImageIndex == mAllImages.size() - 1) {
